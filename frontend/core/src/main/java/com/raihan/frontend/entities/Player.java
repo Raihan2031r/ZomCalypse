@@ -3,6 +3,7 @@ package com.raihan.frontend.entities;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.raihan.frontend.states.playerStates.*;
@@ -17,7 +18,9 @@ public class Player {
 
     private Vector2 velocity;
     private Vector2 position;
-    private Rectangle collider;
+    private Rectangle collider; // collider for in game object such as buildings
+    private Circle detectionRadius; // hit and detected by enemy
+    private Circle attackRadius;
     private final float WIDTH = 50f;
     private final float HEIGHT = 50f;
 
@@ -35,6 +38,8 @@ public class Player {
         this.position = new Vector2(x, y);
         this.weapon = weapon;
         this.collider = new Rectangle(x, y, WIDTH, HEIGHT);
+        this.detectionRadius = new Circle(x, y, WIDTH);
+        this.attackRadius = new Circle(x,y, weapon.range);
         this.psm = new PlayerStateManager();
 
         psm.push(new NormalState());
@@ -164,6 +169,19 @@ public class Player {
             arah.kiri = true;
             arah.kanan = false;
             velocity.x -= accelerationRate * Gdx.graphics.getDeltaTime();
+        }
+    }
+
+    public void takeDamage(float damage){
+        if(this.HP > 0){
+            this.HP -= damage;
+            if (this.HP < 0) this.HP = 0;
+        }
+    }
+
+    public void attack(Enemies enemy){
+        if(weapon.getDamage() > 0 && attackRadius.overlaps(enemy.getDetectionRadius())){
+            enemy.takeDamage(weapon.getDamage());
         }
     }
 

@@ -1,10 +1,13 @@
 package com.raihan.frontend.entities;
 
 public abstract class Weapon {
-    private String weapon_name;
-    private float damage;
-    private float range;
+    protected String weapon_name;
+    protected float damage;
+    protected float range;
+    protected float durability = 100f;
 
+    public float getDurability() { return durability; }
     public float getDamage(){ return damage; }
     public float getRange(){ return range; }
+    public abstract void reduceDurability();
 }

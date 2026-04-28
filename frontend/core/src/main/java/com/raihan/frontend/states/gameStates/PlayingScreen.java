@@ -11,6 +11,7 @@ import com.raihan.frontend.commands.*;
 import com.raihan.frontend.entities.Enemies;
 import com.raihan.frontend.entities.Items;
 import com.raihan.frontend.entities.Player;
+import com.raihan.frontend.entities.Spear;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +39,7 @@ public class PlayingScreen implements GameScreen{
         float zoomLevel = 3f;
         camera.setToOrtho(false, Gdx.graphics.getWidth() / zoomLevel, Gdx.graphics.getHeight() / zoomLevel);
 
-        players.add(new Player("placeholder", null/*placeholder*/, 0f, 0f));
+        players.add(new Player("placeholder", new Spear(), 0f, 0f));
         commands.add(new UpCommand(players.get(0)));
         commands.add(new RightCommand(players.get(0)));
         commands.add(new LeftCommand(players.get(0)));
