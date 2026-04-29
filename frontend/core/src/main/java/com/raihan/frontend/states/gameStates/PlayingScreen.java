@@ -8,10 +8,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.raihan.frontend.commands.*;
-import com.raihan.frontend.entities.Enemies;
-import com.raihan.frontend.entities.Items;
+import com.raihan.frontend.entities.enemies.Enemies;
+import com.raihan.frontend.entities.item.Items;
 import com.raihan.frontend.entities.Player;
-import com.raihan.frontend.entities.Spear;
+import com.raihan.frontend.entities.item.Spear;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +45,7 @@ public class PlayingScreen implements GameScreen{
         commands.add(new LeftCommand(players.get(0)));
         commands.add(new DownCommand(players.get(0)));
         commands.add(new RunCommand(players.get(0)));
+        commands.add(new AttackCommand(players.get(0)));
     }
 
     @Override
@@ -68,14 +69,23 @@ public class PlayingScreen implements GameScreen{
         if (Gdx.input.isKeyPressed(Input.Keys.D)) commands.get(1).execute();
         if (Gdx.input.isKeyPressed(Input.Keys.A)) commands.get(2).execute();
         if (Gdx.input.isKeyPressed(Input.Keys.S)) commands.get(3).execute();
+        for (Enemies e: enemies){
+            if (!(enemies.isEmpty())){
+                if(Gdx.input.isKeyJustPressed(Input.Keys.F)) commands.get(5).execute(e);
+            }
+        }
 
         for (Player p: players){
             p.update(delta);
+            for (Items i: items){
+                i.reduceDurability();
+            }
         }
 
         Player main = players.get(0);
         camera.position.set(main.getPosition().x, main.getPosition().y, 0);
         camera.update();
+
     }
 
     @Override

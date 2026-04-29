@@ -1,6 +1,7 @@
 package com.raihan.frontend.commands;
 
 import com.raihan.frontend.entities.Player;
+import com.raihan.frontend.entities.enemies.Enemies;
 
 public class DownCommand implements Command{
     private final Player player;
@@ -11,5 +12,10 @@ public class DownCommand implements Command{
     @Override
     public void execute() {
         player.moveDown();
+    }
+
+    @Override
+    public void execute(Enemies enemy) {
+        player.attack(enemy);
     }
 }

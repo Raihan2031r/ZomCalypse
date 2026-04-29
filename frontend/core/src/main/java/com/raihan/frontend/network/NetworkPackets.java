@@ -1,6 +1,6 @@
 package com.raihan.frontend.network;
 
-import com.raihan.frontend.entities.Weapon;
+import com.raihan.frontend.entities.item.Weapon;
 
 public class NetworkPackets {
     public NetworkPackets(){}

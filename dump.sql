@@ -17,7 +17,8 @@ CREATE TABLE games (
     updated_at TIMESTAMPTZ DEFAULT NOW(),
     players JSONB NOT NULL DEFAULT '[]'::JSONB,
     enemies JSONB NOT NULL DEFAULT '[]'::JSONB,
-    inventory JSONB NOT NULL DEFAULT '[]'::JSONB
+    inventory JSONB NOT NULL DEFAULT '[]'::JSONB,
+    items JSONB NOT NULL DEFAULT '[]'::JSONB
 );
 
 CREATE TABLE scores (
@@ -27,6 +28,14 @@ CREATE TABLE scores (
     zombies_killed INT NOT NULL DEFAULT 0,
     nights_survived INT NOT NULL DEFAULT 0,
     created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE items (
+    item_id UUID PRIMARY KEY DEFAULT uuid_generate_v7(),
+    owner_id UUID REFERENCES players(player_id) DEFAULT NULL,
+    inventory_id UUID REFERENCES inventories(inventory_id) DEFAULT NULL,
+    durability float NOT NULL DEFAULT 100.0;
+
 );
 
 CREATE FUNCTION update_modified_column()
@@ -41,3 +50,9 @@ CREATE TRIGGER update_players_updated_at
 BEFORE UPDATE ON players
 FOR EACH ROW
 EXECUTE FUNCTION update_modified_column();
+
+CREATE TRIGGER update_games_updated_at
+BEFORE UPDATE ON games
+FOR EACH ROW
+EXECUTE FUNCTION update_modified_column();
+
