@@ -34,8 +34,14 @@ CREATE TABLE items (
     item_id UUID PRIMARY KEY DEFAULT uuid_generate_v7(),
     owner_id UUID REFERENCES players(player_id) DEFAULT NULL,
     inventory_id UUID REFERENCES inventories(inventory_id) DEFAULT NULL,
-    durability float NOT NULL DEFAULT 100.0;
+    durability float NOT NULL DEFAULT 100.0,
+    impact float NOT NULL DEFAULT 0.0
+);
 
+CREATE TABLE inventories (
+    inventory_id UUID PRIMARY KEY DEFAULT uuid_generate_v7(),
+    player_id UUID REFERENCES players(player_id) ON DELETE CASCADE,
+    created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 CREATE FUNCTION update_modified_column()

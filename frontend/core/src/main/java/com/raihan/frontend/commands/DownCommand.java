@@ -16,6 +16,6 @@ public class DownCommand implements Command{
 
     @Override
     public void execute(Enemies enemy) {
-        player.attack(enemy);
+
     }
 }

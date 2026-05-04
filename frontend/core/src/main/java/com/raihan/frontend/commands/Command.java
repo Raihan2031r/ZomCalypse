@@ -4,5 +4,5 @@ import com.raihan.frontend.entities.enemies.Enemies;
 
 public interface Command {
     void execute();
-    default void execute(Enemies enemy){  };
+    void execute(Enemies enemy);
 }

@@ -8,7 +8,10 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.raihan.frontend.entities.enemies.Enemies;
 import com.raihan.frontend.entities.item.Items;
+import com.raihan.frontend.entities.item.Rifle;
 import com.raihan.frontend.entities.item.Weapon;
+import com.raihan.frontend.factories.BulletFactory;
+import com.raihan.frontend.pools.Bullets;
 import com.raihan.frontend.states.playerStates.*;
 
 import java.util.List;
@@ -26,8 +29,8 @@ public class Player {
     private Rectangle collider; // collider for in game object such as buildings
     private Circle detectionRadius; // hit and detected by enemy
     private Circle attackRadius;
-    private final float WIDTH = 50f;
-    private final float HEIGHT = 50f;
+    private final float WIDTH = 16f;
+    private final float HEIGHT = 32f;
     private final float HUNGRY_THRESHOLD = 30f;
     private final float THIRST_THRESHOLD = 40f;
     private Inventory inventory;
@@ -90,6 +93,7 @@ public class Player {
         float drainMul = psm.getEnergyDrainMul();
         satiation -= 1.0f * delta * drainMul;
         hydration -= 1.5f * delta * drainMul;
+        inventory.update(delta);
         energyRegen(delta);
         recovery(delta);
 
@@ -133,8 +137,8 @@ public class Player {
         } else {
             velocity.setZero();
         }
-        System.out.println("X: " + facingX);
-        System.out.println("Y: " + facingY);
+        //System.out.println("X: " + facingX);
+        //System.out.println("Y: " + facingY);
 
         updateCollider();
     }
@@ -268,12 +272,18 @@ public class Player {
     }
 
     public void changeWeapon(Weapon weapon){
-        this.weapon = weapon;
+        Weapon newWeapon = inventory.getWeapon(weapon);
+        if (newWeapon != null) this.weapon = weapon;
     }
 
     public void attack(Enemies enemy){
-        if(weapon.getDurability() > 0 && attackRadius.overlaps(enemy.getDetectionRadius())){
-            weapon.Use(enemy);
+        weapon.Attack();
+        if (attackRadius.overlaps(enemy.getDetectionRadius())) enemy.takeDamage(weapon.getDamage());
+    }
+
+    public void attack(BulletFactory bulletFactory){
+        if(weapon.getDurability() > 0){
+            if(weapon instanceof Rifle) weapon.Attack(bulletFactory);
         }
     }
 
@@ -284,4 +294,6 @@ public class Player {
     public Rectangle getCollider() { return this.collider; }
     public Vector2 getPosition() { return position; }
     public List<Items> getItems() { return inventory.getItems(); }
+    public Weapon getWeapon() { return weapon; }
+    public Vector2 getDirection() { return new Vector2(facingX, facingY); }
 }

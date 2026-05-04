@@ -2,6 +2,7 @@ package com.raihan.frontend.entities.item;
 
 import com.raihan.frontend.entities.enemies.Enemies;
 import com.raihan.frontend.entities.Player;
+import com.raihan.frontend.factories.BulletFactory;
 
 // Item with category weapon
 public class Spear extends Items implements Weapon {
@@ -13,8 +14,8 @@ public class Spear extends Items implements Weapon {
     }
 
     @Override
-    public void Use(Player player) {
-        // cannot friendly fire
+    public void update(float delta) {
+        // doesn't rotten or something else
     }
 
     @Override
@@ -23,13 +24,17 @@ public class Spear extends Items implements Weapon {
     }
 
     @Override
-    public void Use(Enemies enemies) {
-        enemies.takeDamage(impact);
+    public float getDamage() {
+        return impact;
+    }
+
+    @Override
+    public void Attack() {
         this.durability -= 2f;
     }
 
     @Override
-    public void reduceDurability() {
-        // Not reduced on regular
+    public void Attack(BulletFactory bulletFactory) {
+        // Doesn't need a bullet
     }
 }
