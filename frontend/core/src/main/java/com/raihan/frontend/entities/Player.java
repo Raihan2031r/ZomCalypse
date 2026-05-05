@@ -11,7 +11,6 @@ import com.raihan.frontend.entities.item.Items;
 import com.raihan.frontend.entities.item.Rifle;
 import com.raihan.frontend.entities.item.Weapon;
 import com.raihan.frontend.factories.BulletFactory;
-import com.raihan.frontend.pools.Bullets;
 import com.raihan.frontend.states.playerStates.*;
 
 import java.util.List;
@@ -26,8 +25,8 @@ public class Player {
 
     private Vector2 velocity;
     private Vector2 position;
-    private Rectangle collider; // collider for in game object such as buildings
-    private Circle detectionRadius; // hit and detected by enemy
+    private Rectangle collider;
+    private Circle detectionRadius;
     private Circle attackRadius;
     private final float WIDTH = 16f;
     private final float HEIGHT = 32f;
@@ -144,7 +143,9 @@ public class Player {
     }
 
     public void updateCollider() {
-        collider.setPosition(position.x, position.y);
+        collider.setPosition(position);
+        detectionRadius.setPosition(position);
+        attackRadius.setPosition(position);
     }
 
     private void energyRegen(float delta) {

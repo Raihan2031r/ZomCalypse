@@ -4,6 +4,7 @@ import com.raihan.frontend.entities.Player;
 import com.raihan.frontend.entities.enemies.Enemies;
 import com.raihan.frontend.entities.item.Rifle;
 import com.raihan.frontend.factories.BulletFactory;
+import com.raihan.frontend.states.playerStates.DyingState;
 
 import java.util.List;
 
@@ -21,10 +22,12 @@ public class AttackCommand  implements Command{
     }
 
     public void execute(BulletFactory factory, List<Enemies> enemies){
-        if(player.getWeapon() instanceof Rifle ) player.attack(factory);
-        else {
-            for (Enemies e: enemies){
-                player.attack(e);
+        if(!(player.getState() instanceof DyingState)){
+            if(player.getWeapon() instanceof Rifle ) player.attack(factory);
+            else {
+                for (Enemies e: enemies){
+                    player.attack(e);
+                }
             }
         }
     }

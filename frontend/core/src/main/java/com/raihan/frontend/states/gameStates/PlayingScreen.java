@@ -9,11 +9,15 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.raihan.frontend.commands.*;
 import com.raihan.frontend.entities.enemies.Enemies;
+import com.raihan.frontend.entities.enemies.Zombies;
 import com.raihan.frontend.entities.item.Items;
 import com.raihan.frontend.entities.Player;
 import com.raihan.frontend.entities.item.Spear;
 import com.raihan.frontend.factories.BulletFactory;
+import com.raihan.frontend.factories.ZombieFactory;
 import com.raihan.frontend.pools.Bullets;
+import com.raihan.frontend.strategies.DifficultyStrategy;
+import com.raihan.frontend.strategies.EasyMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +25,6 @@ import java.util.List;
 public class PlayingScreen implements GameScreen{
     private GameStateManager gsm;
     private final List<Player> players; // Player 1 always the one controlled
-    private final List<Enemies> enemies;
     private final List<Items> items;
     private final List<Command> commands;
     private final AttackCommand attackCommand;
@@ -30,14 +33,18 @@ public class PlayingScreen implements GameScreen{
     private final float SECONDS_PER_MINUTE = 1.0f;
     private OrthographicCamera camera;
     private final BulletFactory bulletFactory;
+    private ZombieFactory zombieFactory;
+    private DifficultyStrategy difficultyStrategy;
+    private float waveTimer = 0f;
 
     public PlayingScreen(GameStateManager gsm){
         players = new ArrayList<>();
-        enemies = new ArrayList<>();
         items = new ArrayList<>();
         commands = new ArrayList<>();
         this.gsm = gsm;
         bulletFactory = new BulletFactory();
+        zombieFactory = new ZombieFactory();
+        difficultyStrategy = new EasyMode();
 
         camera = new OrthographicCamera();
 
@@ -56,6 +63,8 @@ public class PlayingScreen implements GameScreen{
     @Override
     public void update(float delta) {
         timeTimer += delta;
+        waveTimer += delta;
+
         if (timeTimer >= SECONDS_PER_MINUTE) {
             Minute++;
             timeTimer = 0f;
@@ -67,6 +76,12 @@ public class PlayingScreen implements GameScreen{
             }
         }
 
+        if (waveTimer >= difficultyStrategy.getTimePerWave()){
+            waveTimer = 0f;
+
+            zombieFactory.spawnWave(difficultyStrategy, 300f, 0f, 500f, 500f);
+        }
+
         players.get(0).idle();
         if(!(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT))) players.get(0).stopRun();
         if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) commands.get(4).execute();
@@ -74,12 +89,25 @@ public class PlayingScreen implements GameScreen{
         if (Gdx.input.isKeyPressed(Input.Keys.D)) commands.get(1).execute();
         if (Gdx.input.isKeyPressed(Input.Keys.A)) commands.get(2).execute();
         if (Gdx.input.isKeyPressed(Input.Keys.S)) commands.get(3).execute();
-        if(Gdx.input.isKeyJustPressed(Input.Keys.F)) attackCommand.execute(bulletFactory, enemies);
-
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
+            List<Enemies> activeEnemies  = new ArrayList<>(zombieFactory.getInUse());
+            attackCommand.execute(bulletFactory, activeEnemies);
+        }
 
         for (Player p: players){
             p.update(delta);
         }
+
+        for (int i = zombieFactory.getInUse().size() - 1; i >= 0; i--) {
+            Zombies z = zombieFactory.getInUse().get(i);
+            z.update(delta, players.get(0));
+            System.out.println(z.getPosition());
+
+            if (z.getHP() <= 0) {
+                zombieFactory.release(z);
+            }
+        }
+
         for (Items i: items){
             i.update(delta);
         }
@@ -109,6 +137,9 @@ public class PlayingScreen implements GameScreen{
         shapeRenderer.circle(0f, 0f, 50f);
         for (Player p: players){
             p.render(shapeRenderer);
+        }
+        for (Zombies z: zombieFactory.getInUse()){
+            z.render(shapeRenderer);
         }
         shapeRenderer.end();
     }

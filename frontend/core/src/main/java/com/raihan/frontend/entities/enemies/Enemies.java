@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.raihan.frontend.entities.Player;
 import com.raihan.frontend.states.enemyStates.EnemyStateManager;
+import com.raihan.frontend.states.enemyStates.IdleState;
 
 public abstract class Enemies {
     protected float HP;
@@ -56,6 +57,18 @@ public abstract class Enemies {
 
         detectionRadius.setPosition(centerX, centerY);
         attackRadius.setPosition(centerX, centerY);
+    }
+
+    public void spawn(float x, float y, float hp, float atk, float speed) {
+        this.position.set(x, y);
+        this.velocity.setZero();
+        this.HP = hp;
+        this.maxHP = hp;
+        this.atk = atk;
+        this.speed = speed;
+
+        updateSensors();
+        this.esm.set(new IdleState());
     }
 
     public void takeDamage(float damage){
