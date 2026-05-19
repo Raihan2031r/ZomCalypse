@@ -8,6 +8,8 @@ import com.raihan.frontend.entities.Player;
 import com.raihan.frontend.states.enemyStates.EnemyStateManager;
 import com.raihan.frontend.states.enemyStates.IdleState;
 
+import java.util.List;
+
 public abstract class Enemies {
     protected float HP;
     protected float maxHP;
@@ -18,7 +20,7 @@ public abstract class Enemies {
     protected Vector2 velocity;
 
     protected Circle detectionRadius;
-    protected Circle attackRadius;
+    protected Rectangle attackCollider;
     protected Rectangle collider;
 
     protected final EnemyStateManager esm;
@@ -31,9 +33,10 @@ public abstract class Enemies {
         this.atk = atk;
         this.speed = speed;
 
-        this.collider = new Rectangle(x, y, 16f, 32f);
+        this.collider = new Rectangle(x, y, 16f, 16f);
         this.detectionRadius = new Circle(x, y, detectRad);
-        this.attackRadius = new Circle(x, y, atkRad);
+
+        this.attackCollider = new Rectangle(x, y, atkRad, atkRad);
 
         this.esm = new EnemyStateManager(this);
     }
@@ -41,22 +44,23 @@ public abstract class Enemies {
     public void update(float delta, Player player) {
         esm.update(delta, player);
 
-        position.x += velocity.x * delta;
-        position.y += velocity.y * delta;
+        //position.x += velocity.x * delta;
+        //position.y += velocity.y * delta;
 
-        updateSensors();
+        updateCollider();
     }
 
     public abstract void render(ShapeRenderer shapeRenderer);
 
-    protected void updateSensors() {
+    protected void updateCollider() {
         collider.setPosition(position.x, position.y);
 
         float centerX = position.x + collider.width / 2f;
         float centerY = position.y + collider.height / 2f;
 
         detectionRadius.setPosition(centerX, centerY);
-        attackRadius.setPosition(centerX, centerY);
+
+        attackCollider.setPosition(centerX - attackCollider.width / 2f, centerY - attackCollider.height / 2f);
     }
 
     public void spawn(float x, float y, float hp, float atk, float speed) {
@@ -67,7 +71,7 @@ public abstract class Enemies {
         this.atk = atk;
         this.speed = speed;
 
-        updateSensors();
+        updateCollider();
         this.esm.set(new IdleState());
     }
 
@@ -80,13 +84,48 @@ public abstract class Enemies {
         }
     }
 
+    public void moveAndCollide(float delta, List<Rectangle> obstacles) {
+        float oldX = position.x;
+        float oldY = position.y;
+
+        position.x += velocity.x * delta;
+        updateCollider();
+
+        for (Rectangle wall : obstacles) {
+            if (this.collider.overlaps(wall)) {
+                position.x = oldX;
+                velocity.x = 0;
+                updateCollider();
+                break;
+            }
+        }
+
+        position.y += velocity.y * delta;
+        updateCollider();
+
+        for (Rectangle wall : obstacles) {
+            if (this.collider.overlaps(wall)) {
+                position.y = oldY;
+                velocity.y = 0;
+                updateCollider();
+                break;
+            }
+        }
+    }
+
     public EnemyStateManager getEsm() { return esm; }
 
     public Circle getDetectionRadius() { return detectionRadius; }
-    public Circle getAttackRadius() { return attackRadius; }
+
+    public Rectangle getAttackCollider() { return attackCollider; }
+
     public Vector2 getPosition() { return position; }
     public Vector2 getVelocity() { return velocity; }
     public float getSpeed() { return speed; }
     public float getAtk() { return atk; }
     public float getHP() { return HP; }
+
+    public Rectangle getCollider() {
+        return this.collider;
+    }
 }

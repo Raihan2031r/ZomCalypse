@@ -1,24 +1,25 @@
 package com.raihan.frontend;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
+import com.badlogic.gdx.utils.JsonWriter;
+import com.raihan.frontend.observers.ScoreManager;
+import com.raihan.frontend.save.SaveDTO;
 import com.raihan.frontend.services.BackendService;
 
 public class GameManager {
     private static GameManager instance;
+    private final ScoreManager scoreManager;
     private String authToken;
     private BackendService backendService;
     private String username;
-    private String currentPlayerId = null;
-    private int score = 0;
-    private int zombieKilled = 0;
-    private int nigthsPassed = 0;
-    private boolean gameActive;
 
     private GameManager(){
+        scoreManager = new ScoreManager();
         backendService = new BackendService();
-        gameActive = false;
+        backendService.pingBackend();
     }
 
     public static GameManager getInstance() {
@@ -27,6 +28,10 @@ public class GameManager {
         }
 
         return instance;
+    }
+
+    public ScoreManager getScoreManager() {
+        return scoreManager;
     }
 
     public void setAuthToken(String token) {
@@ -72,6 +77,63 @@ public class GameManager {
             @Override
             public void onError(String error) {
                 Gdx.app.error("REGISTER_ERROR", error);
+                callback.onError(error);
+            }
+        });
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void endGame() {
+        if (authToken == null) {
+            Gdx.app.log("SCORE", "Pemain offline, skor tidak dikirim ke server.");
+            return;
+        }
+
+        int score = scoreManager.getTotalScore();
+        int zombieKilled = scoreManager.getZombieKills();
+        int daysPassed = scoreManager.getDaysSurvived();
+
+        backendService.submitScore(authToken, score, zombieKilled, daysPassed, new BackendService.RequestCallback() {
+            @Override
+            public void onSuccess(String response) {
+                Gdx.app.log("SCORE_SUCCESS", "Berhasil mensubmit score ke Leaderboard!");
+            }
+
+            @Override
+            public void onError(String error) {
+                Gdx.app.error("SCORE_ERROR", error);
+            }
+        });
+    }
+
+    public String getAuthToken() {
+        return authToken;
+    }
+
+    public void saveGameToCloud(SaveDTO saveData, BackendService.RequestCallback callback) {
+        if (authToken == null) {
+            Gdx.app.error("SAVE", "Pemain belum login. Save tidak dikirim ke cloud.");
+            callback.onError("Not logged in");
+            return;
+        }
+
+        Json json = new Json();
+        json.setOutputType(JsonWriter.OutputType.json);
+        String jsonString = json.toJson(saveData);
+
+        backendService.saveGameData(authToken, jsonString, new BackendService.RequestCallback() {
+            @Override
+            public void onSuccess(String response) {
+                Gdx.app.log("SAVE_SUCCESS", "Game berhasil disimpan ke Cloud!");
+                callback.onSuccess(response);
+            }
+
+            @Override
+            public void onError(String error) {
+                Gdx.app.error("SAVE_ERROR", "Gagal menyimpan ke Cloud: " + error);
                 callback.onError(error);
             }
         });

@@ -12,35 +12,30 @@ CREATE TABLE players (
 CREATE TABLE games (
     game_id UUID PRIMARY KEY DEFAULT uuid_generate_v7(),
     player_id UUID REFERENCES players(player_id) ON DELETE CASCADE,
-    score INTEGER NOT NULL,
+    game_difficulty VARCHAR(50) NOT NULL DEFAULT 'NORMAL',
+    zombies_killed INT NOT NULL DEFAULT 0,
+    game_day INT NOT NULL DEFAULT 0,
+    game_hour INT NOT NULL DEFAULT 0,
+    game_minute INT NOT NULL DEFAULT 0,
+    spent_score INT NOT NULL DEFAULT 0,
+    player_hp REAL NOT NULL DEFAULT 100,
+    player_energy REAL NOT NULL DEFAULT 100,
+    player_satiation REAL NOT NULL DEFAULT 100,
+    player_hydration REAL NOT NULL DEFAULT 100,
+    player_position JSONB NOT NULL DEFAULT '{"x":0,"y":0}'::JSONB,
+    current_weapon VARCHAR(100),
+    inventory_items JSONB NOT NULL DEFAULT '[]'::JSONB,
+    active_zombies JSONB NOT NULL DEFAULT '[]'::JSONB,
     created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW(),
-    players JSONB NOT NULL DEFAULT '[]'::JSONB,
-    enemies JSONB NOT NULL DEFAULT '[]'::JSONB,
-    inventory JSONB NOT NULL DEFAULT '[]'::JSONB,
-    items JSONB NOT NULL DEFAULT '[]'::JSONB
+    updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 CREATE TABLE scores (
     score_id UUID PRIMARY KEY DEFAULT uuid_generate_v7(),
     player_id UUID REFERENCES players(player_id) ON DELETE CASCADE,
-    value INTEGER NOT NULL,
+    total_score INTEGER NOT NULL,
     zombies_killed INT NOT NULL DEFAULT 0,
-    nights_survived INT NOT NULL DEFAULT 0,
-    created_at TIMESTAMPTZ DEFAULT NOW()
-);
-
-CREATE TABLE items (
-    item_id UUID PRIMARY KEY DEFAULT uuid_generate_v7(),
-    owner_id UUID REFERENCES players(player_id) DEFAULT NULL,
-    inventory_id UUID REFERENCES inventories(inventory_id) DEFAULT NULL,
-    durability float NOT NULL DEFAULT 100.0,
-    impact float NOT NULL DEFAULT 0.0
-);
-
-CREATE TABLE inventories (
-    inventory_id UUID PRIMARY KEY DEFAULT uuid_generate_v7(),
-    player_id UUID REFERENCES players(player_id) ON DELETE CASCADE,
+    days_survived INT NOT NULL DEFAULT 0,
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 

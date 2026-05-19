@@ -25,9 +25,7 @@ public class AttackCommand  implements Command{
         if(!(player.getState() instanceof DyingState)){
             if(player.getWeapon() instanceof Rifle ) player.attack(factory);
             else {
-                for (Enemies e: enemies){
-                    player.attack(e);
-                }
+                player.attack(enemies);
             }
         }
     }

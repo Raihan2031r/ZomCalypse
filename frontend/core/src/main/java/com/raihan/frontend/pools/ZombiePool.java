@@ -3,8 +3,8 @@ package com.raihan.frontend.pools;
 import com.raihan.frontend.entities.enemies.Zombies;
 
 public class ZombiePool extends ObjectPool<Zombies> {
-    private final float DETECT_RAD = 150f;
-    private final float ATK_RAD = 24f;
+    private final float DETECT_RAD = 120f;
+    private final float ATK_RAD = 7f;
 
     @Override
     protected Zombies createObject() {

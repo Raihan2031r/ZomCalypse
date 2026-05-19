@@ -1,5 +1,6 @@
 package com.raihan.frontend.entities;
 
+import com.raihan.frontend.entities.item.Ammo;
 import com.raihan.frontend.entities.item.Items;
 import com.raihan.frontend.entities.item.Weapon;
 
@@ -27,6 +28,26 @@ public class Inventory {
             item.setOwner(owner);
             items.add(item);
         }
+    }
+
+    public int countAmmo() {
+        int count = 0;
+        for (Items i : items) {
+            if (i instanceof Ammo) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public boolean consumeAmmo() {
+        for (Items i : items) {
+            if (i instanceof Ammo) {
+                items.remove(i);
+                return true;
+            }
+        }
+        return false;
     }
 
     public void dropItem(Items item){

@@ -1,12 +1,12 @@
 package com.raihan.frontend.states.playerStates;
 
 public abstract class PlayerState {
-    private float duration;
-    private float damage;
-    private boolean canMove;
-    private float velocityMul; // multiplier for speed
-    private float atkMul; // multiplier for speed
-    private float energyDrainMul; // multiplier for energy drain (running)
+    private float duration = 0f;
+    private float damage = 0f;
+    private boolean canMove = true;
+    private float velocityMul = 1f; // multiplier for speed
+    private float atkMul = 1f; // multiplier for speed
+    private float energyDrainMul = 1f; // multiplier for energy drain (running)
 
     protected void setDuration(float duration){ this.duration = duration; }
     protected void setDamage(float damage) { this.damage = damage; }

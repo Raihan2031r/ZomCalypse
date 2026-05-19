@@ -1,5 +1,6 @@
 package com.raihan.frontend.factories;
 
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.raihan.frontend.pools.Bullets;
 import com.raihan.frontend.pools.BulletPool;
 
@@ -24,6 +25,10 @@ public class BulletFactory {
 
     public void releaseAll() {
         bulletPool.releaseAll();
+    }
+
+    public void render(ShapeRenderer shapeRenderer) {
+        bulletPool.render(shapeRenderer);
     }
 
     public List<Bullets> getInUse() {

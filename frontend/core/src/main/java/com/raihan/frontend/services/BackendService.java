@@ -1,6 +1,4 @@
 package com.raihan.frontend.services;
-
-import com.badlogic.gdx.utils.Json;
 import okhttp3.*;
 
 import java.io.IOException;
@@ -8,8 +6,7 @@ import java.io.IOException;
 public class BackendService {
     private static final boolean IS_DEV = false;
     private static final String DEV_URL = "http://localhost:8081";
-    private static final String PROD_URL =
-        "https://floor-is-lava-backend-206920707557.europe-west1.run.app";
+    private static final String PROD_URL = "https://zomcalypse-backend.up.railway.app";
     private final String BASE_URL;
     private static final OkHttpClient client = new OkHttpClient();
     public BackendService() {
@@ -22,11 +19,11 @@ public class BackendService {
     }
 
     public void createPlayer(String username, String password, RequestCallback callback) {
-        Json json = new Json();
-        RegisterRequest  requestData = new RegisterRequest(username, password);
+        String json = "{\"username\":\"" + username + "\",\"password\":\"" + password + "\"}";
 
-        String jsonString = json.toJson(requestData);
-        RequestBody body = RequestBody.create(jsonString, MediaType.parse("application/json"));
+        RequestBody body = RequestBody.create(
+            json, MediaType.parse("application/json")
+        );
 
         Request request = new Request.Builder()
             .url(BASE_URL + "/auth/signup")
@@ -68,17 +65,48 @@ public class BackendService {
         send(request, callback);
     }
 
-    public void submitScore(String playerId, int score, int coins, RequestCallback callback) {
+    public void submitScore(String token, int score, int zombiesKilled, int daysPassed, RequestCallback callback) {
         String json = String.format(
-            "{\"playerId\":\"%s\",\"value\":%d,\"coinsCollected\":%d}",
-            playerId, score, coins
+            "{" +
+                "\"value\":%d," +
+                "\"zombies_killed\":%d," +
+                "\"days_Passed\":%d" +
+                "}",
+            score, zombiesKilled, daysPassed
         );
+
         RequestBody body = RequestBody.create(
             json, MediaType.parse("application/json")
         );
+
         Request request = new Request.Builder()
             .url(BASE_URL + "/api/scores")
             .post(body)
+            .addHeader("Authorization", "Bearer " + token)
+            .build();
+
+        send(request, callback);
+    }
+
+    public void getPlayerSaves(String token, RequestCallback callback) {
+        Request request = new Request.Builder()
+            .url(BASE_URL + "/api/games")
+            .get()
+            .addHeader("Authorization", "Bearer " + token)
+            .build();
+
+        send(request, callback);
+    }
+
+    public void saveGameData(String token, String jsonSaveData, RequestCallback callback) {
+        RequestBody body = RequestBody.create(
+            jsonSaveData, MediaType.parse("application/json")
+        );
+
+        Request request = new Request.Builder()
+            .url(BASE_URL + "/api/games/save")
+            .post(body)
+            .addHeader("Authorization", "Bearer " + token)
             .build();
 
         send(request, callback);
@@ -111,10 +139,12 @@ public class BackendService {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    callback.onSuccess(response.body().string());
-                } else {
-                    callback.onError("HTTP " + response.code());
+                try (ResponseBody responseBody = response.body()) {
+                    if (response.isSuccessful() && responseBody != null) {
+                        callback.onSuccess(responseBody.string());
+                    } else {
+                        callback.onError("HTTP " + response.code());
+                    }
                 }
             }
         });

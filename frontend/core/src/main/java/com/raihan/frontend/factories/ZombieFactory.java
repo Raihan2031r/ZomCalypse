@@ -1,5 +1,6 @@
 package com.raihan.frontend.factories;
 
+import com.badlogic.gdx.math.Rectangle;
 import com.raihan.frontend.entities.enemies.Zombies;
 import com.raihan.frontend.pools.ZombiePool;
 import com.raihan.frontend.strategies.DifficultyStrategy;
@@ -20,14 +21,22 @@ public class ZombieFactory {
         this.random = new Random();
     }
 
-    public void spawnWave(DifficultyStrategy strategy, float spawnAreaX, float spawnAreaY, float areaWidth, float areaHeight) {
+    public void spawnWave(DifficultyStrategy strategy, List<Rectangle> spawnAreas) {
         int zombieCount = (int) strategy.getZombiesPerWave();
         float hpMultiplier = strategy.getMode().equalsIgnoreCase("Hard") ? 1.5f : 1.0f;
         float speedMultiplier = strategy.getMode().equalsIgnoreCase("Hard") ? 1.3f : 1.0f;
 
+        float ZOMBIE_WIDTH = 32f;
+        float ZOMBIE_HEIGHT = 32f;
+
         for (int i = 0; i < zombieCount; i++) {
-            float randomX = spawnAreaX + random.nextFloat() * areaWidth;
-            float randomY = spawnAreaY + random.nextFloat() * areaHeight;
+            Rectangle chosenArea = spawnAreas.get(random.nextInt(spawnAreas.size()));
+
+            float maxSpawnWidth = Math.max(0, chosenArea.width - ZOMBIE_WIDTH);
+            float maxSpawnHeight = Math.max(0, chosenArea.height - ZOMBIE_HEIGHT);
+
+            float randomX = chosenArea.x + (random.nextFloat() * maxSpawnWidth);
+            float randomY = chosenArea.y + (random.nextFloat() * maxSpawnHeight);
 
             Zombies zombie = zombiePool.obtain();
 

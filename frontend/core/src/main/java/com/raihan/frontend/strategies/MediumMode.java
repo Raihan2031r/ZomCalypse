@@ -13,6 +13,6 @@ public class MediumMode implements DifficultyStrategy{
 
     @Override
     public float getTimePerWave() {
-        return 30f;
+        return 65f;
     }
 }

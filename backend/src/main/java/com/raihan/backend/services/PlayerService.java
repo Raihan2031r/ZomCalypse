@@ -5,7 +5,6 @@ import com.raihan.backend.repositories.PlayerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -16,13 +15,6 @@ public class PlayerService {
     @Autowired
     private PlayerRepository playerRepository;
 
-    public Player createPlayer(Player player) {
-        if(playerRepository.existsByUsername(player.getUsername())){
-            throw new RuntimeException("Username already exists: " + player.getUsername());
-        }
-        return playerRepository.save(player);
-    }
-
     public Optional<Player> getPlayerById(UUID playerId){
         return playerRepository.findById(playerId);
     }
@@ -31,13 +23,18 @@ public class PlayerService {
         return playerRepository.findByUsername(username);
     }
 
-    public Player updatePlayer(UUID playerId, Player player){
-        Player existingPayer = playerRepository.findById(playerId).orElseThrow(() -> new RuntimeException("Player with " + playerId + " does not exist"));
-        if (player.getUsername() != null && playerRepository.existsByUsername(player.getUsername())){
-            throw new RuntimeException("Username already exists");
+    public Player updatePlayer(UUID playerId, Player playerInput){
+        Player existingPlayer = playerRepository.findById(playerId)
+                .orElseThrow(() -> new RuntimeException("Player with " + playerId + " does not exist"));
+
+        if (playerInput.getUsername() != null && !playerInput.getUsername().equals(existingPlayer.getUsername())) {
+            if (playerRepository.existsByUsername(playerInput.getUsername())){
+                throw new RuntimeException("Username already exists");
+            }
+            existingPlayer.setUsername(playerInput.getUsername());
         }
-        existingPayer.setUsername(player.getUsername());
-        return playerRepository.save(player);
+
+        return playerRepository.save(existingPlayer);
     }
 
     public void deletePlayer(UUID playerId){

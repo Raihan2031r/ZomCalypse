@@ -12,5 +12,13 @@ public class Zombies extends Enemies{
     public void render(ShapeRenderer shapeRenderer) {
         shapeRenderer.setColor(Color.FOREST);
         shapeRenderer.rect(position.x, position.y, collider.width, collider.height);
+
+        float barY = position.y + collider.height + 4f;
+        shapeRenderer.setColor(Color.FIREBRICK);
+        shapeRenderer.rect(position.x, barY, collider.width, 3f);
+
+        float hpPercent = HP / maxHP;
+        shapeRenderer.setColor(Color.GREEN);
+        shapeRenderer.rect(position.x, barY, collider.width * hpPercent, 3f);
     }
 }

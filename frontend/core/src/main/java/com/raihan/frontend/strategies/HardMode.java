@@ -13,6 +13,6 @@ public class HardMode implements DifficultyStrategy{
 
     @Override
     public float getTimePerWave() {
-        return 20f;
+        return 60f;
     }
 }

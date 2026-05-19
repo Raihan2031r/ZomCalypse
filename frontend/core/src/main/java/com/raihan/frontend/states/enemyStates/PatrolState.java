@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.raihan.frontend.entities.Player;
 import com.raihan.frontend.entities.enemies.Enemies;
+import com.raihan.frontend.states.playerStates.DyingState;
 
 import java.util.Random;
 
@@ -33,7 +34,9 @@ public class PatrolState implements EnemyState {
 
     @Override
     public void update(Enemies enemy, Player player, float delta) {
-        if (enemy.getDetectionRadius().overlaps(player.getDetectionRadius())) {
+        if (enemy.getDetectionRadius().overlaps(player.getDetectionRadius()) &&
+            !(player.getState() instanceof DyingState))
+        {
             enemy.getEsm().set(new ChaseState());
             return;
         }

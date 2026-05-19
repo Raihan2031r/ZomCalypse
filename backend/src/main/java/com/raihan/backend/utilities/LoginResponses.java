@@ -1,8 +1,5 @@
 package com.raihan.backend.utilities;
 
-import java.util.Optional;
-import java.util.UUID;
-
 public class LoginResponses {
     private String token;
     private long expires;

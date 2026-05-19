@@ -10,4 +10,9 @@ public interface Weapon {
     public float getDurability();
     public void Attack();
     public void Attack(BulletFactory bulletFactory);
+
+    boolean isReloading();
+    float getAttackDelay();
+
+    String getName();
 }

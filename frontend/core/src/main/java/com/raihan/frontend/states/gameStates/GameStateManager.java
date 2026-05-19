@@ -10,9 +10,10 @@ public class GameStateManager {
 
     public GameStateManager(){ states = new Stack<>(); }
     public void push(GameScreen screen){ states.push(screen); }
-    public void pop(GameScreen screen){
-        states.pop().dispose();
-        push(screen);
+    public void pop() {
+        if (!states.isEmpty()) {
+            states.pop().dispose();
+        }
     }
 
     public void update(float delta) {

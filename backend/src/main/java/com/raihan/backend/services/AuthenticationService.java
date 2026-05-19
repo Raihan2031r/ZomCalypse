@@ -21,18 +21,26 @@ public class AuthenticationService {
         this.playerRepository = playerRepository;
     }
 
-    public Player register(RegisterUser newUser){
-        Player user = new Player().setUsername(newUser.getUsername())
-                                  .setPassword(passwordEncoder.encode(newUser.getPassword()));
+    public Player signup(RegisterUser request) {
+        if (playerRepository.existsByUsername(request.getUsername())) {
+            throw new RuntimeException("Username sudah digunakan!");
+        }
+        Player user = new Player()
+                .setUsername(request.getUsername())
+                .setPassword(passwordEncoder.encode(request.getPassword()));
+
         return playerRepository.save(user);
     }
 
-    public Player authenticate(LoginUser user){
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                user.getPassword(),
-                user.getPassword()
-        ));
+    public Player authenticate(LoginUser request){
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getUsername(),
+                        request.getPassword()
+                )
+        );
 
-        return playerRepository.findByUsername(user.getUsername()).orElseThrow();
+        return playerRepository.findByUsername(request.getUsername())
+                .orElseThrow(() -> new RuntimeException("Player tidak ditemukan"));
     }
 }

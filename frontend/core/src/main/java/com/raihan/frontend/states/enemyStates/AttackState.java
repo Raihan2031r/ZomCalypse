@@ -20,7 +20,7 @@ public class AttackState implements EnemyState{
     public void update(Enemies enemy, Player player, float delta) {
         attackTimer += delta;
         if (attackTimer >= PREPARE_ATTACK && !hasDealtDamage) {
-            if (enemy.getAttackRadius().overlaps(player.getDetectionRadius())) {
+            if (enemy.getAttackCollider().overlaps(player.getCollider())) {
                 player.takeImpact(-enemy.getAtk());
             }
             hasDealtDamage = true;

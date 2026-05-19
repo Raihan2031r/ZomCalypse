@@ -10,7 +10,6 @@ import com.raihan.frontend.states.gameStates.IntroScreen;
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main extends Game {
     private SpriteBatch batch;
-    private IntroScreen intro;
     private GameStateManager gsm;
     private ShapeRenderer renderer;
 
@@ -19,8 +18,18 @@ public class Main extends Game {
         batch = new SpriteBatch();
         gsm = new GameStateManager();
         renderer = new ShapeRenderer();
+        gsm.push(new IntroScreen(gsm));
 
-        gsm.push(new IntroScreen(batch, gsm));
+        Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        super.resize(width, height);
+
+        if (gsm != null) {
+            gsm.resize(width, height);
+        }
     }
 
     @Override

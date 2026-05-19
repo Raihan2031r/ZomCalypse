@@ -1,0 +1,95 @@
+{
+    "activeFile": "untitled.tmx",
+    "expandedProjectPaths": [
+        "."
+    ],
+    "fileStates": {
+        "All_City_Tileset.tsx": {
+            "dynamicWrapping": true,
+            "scaleInDock": 1,
+            "scaleInEditor": 2
+        },
+        "Assets.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 2,
+            "scaleInEditor": 2
+        },
+        "Boxes.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 2,
+            "scaleInEditor": 1
+        },
+        "Street_decorations.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 3
+        },
+        "awnings.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "buildings_01.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 2,
+            "scaleInEditor": 1
+        },
+        "buildings_02.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "street.tsx": {
+            "scaleInDock": 2,
+            "scaleInEditor": 8
+        },
+        "untitled.tmx": {
+            "expandedGroupLayers": [
+                13,
+                14,
+                19,
+                43,
+                24,
+                52,
+                49,
+                34,
+                20,
+                39
+            ],
+            "scale": 0.75,
+            "selectedLayer": 7,
+            "viewCenter": {
+                "x": 428.66666666666663,
+                "y": 405.99999999999994
+            }
+        }
+    },
+    "last.imagePath": "C:/Users/Raihan2031r/Downloads/GameAssets/The City",
+    "map.height": 50,
+    "map.lastUsedFormat": "tmx",
+    "map.layerDataFormat": "1",
+    "map.tileHeight": 16,
+    "map.tileWidth": 16,
+    "map.width": 50,
+    "openFiles": [
+        "untitled.tmx",
+        "buildings_01.tsx",
+        "buildings_02.tsx",
+        "awnings.tsx",
+        "Boxes.tsx"
+    ],
+    "project": "untitled.tiled-project",
+    "recentFiles": [
+        "Boxes.tsx",
+        "awnings.tsx",
+        "buildings_02.tsx",
+        "buildings_01.tsx",
+        "untitled.tmx",
+        "All_City_Tileset.tsx",
+        "Street_decorations.tsx",
+        "street.tsx",
+        "Assets.tsx"
+    ],
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.tileSize": {
+        "height": 16,
+        "width": 16
+    }
+}

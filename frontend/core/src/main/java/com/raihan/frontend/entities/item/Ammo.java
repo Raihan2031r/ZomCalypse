@@ -1,7 +1,7 @@
 package com.raihan.frontend.entities.item;
 
 public class Ammo extends Items implements Consumables{
-    protected Ammo() {
+    public Ammo() {
         super("Ammo");
         super.impact = 30f;
     }
