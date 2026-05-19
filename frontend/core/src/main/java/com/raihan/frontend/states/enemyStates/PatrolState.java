@@ -18,11 +18,11 @@ public class PatrolState implements EnemyState {
     @Override
     public void enter(Enemies enemy) {
         patrolTimer = 0f;
-        patrolDuration = random.nextFloat(2f, 4f);
+        patrolDuration = 2f + random.nextFloat() * (4f - 2f);
 
         patrolDirection = new Vector2();
 
-        float angle = random.nextFloat(0f, 360f);
+        float angle = random.nextFloat() * 360f;
 
         patrolDirection.x = MathUtils.cosDeg(angle);
         patrolDirection.y = MathUtils.sinDeg(angle);

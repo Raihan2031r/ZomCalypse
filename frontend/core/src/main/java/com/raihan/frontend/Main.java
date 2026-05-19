@@ -19,8 +19,6 @@ public class Main extends Game {
         gsm = new GameStateManager();
         renderer = new ShapeRenderer();
         gsm.push(new IntroScreen(gsm));
-
-        Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
     }
 
     @Override

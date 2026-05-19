@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 
 public class ScoreUIObserver implements Observer {
     private int currentScore = 0;
@@ -20,12 +19,7 @@ public class ScoreUIObserver implements Observer {
 
         batch = new SpriteBatch();
 
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("Silver.ttf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 32;
-        parameter.color = Color.WHITE;
-
-        font = generator.generateFont(parameter);
+        font = new BitmapFont();
         font.getData().setScale(1.5f);
         font.setColor(Color.GOLD);
     }

@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -36,15 +35,9 @@ public class LoginScreen implements GameScreen {
         root.setBackground(new Image(createColorPixmap(0.1f, 0.1f, 0.15f, 1f)).getDrawable());
         stage.addActor(root);
 
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("Silver.ttf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 32;
-        parameter.color = Color.WHITE;
+        BitmapFont defaultFont = new BitmapFont();
 
-        BitmapFont customFont = generator.generateFont(parameter);
-        generator.dispose();
-
-        skin.add("default-font", customFont);
+        skin.add("default-font", defaultFont);
 
         Label.LabelStyle labelStyle = new Label.LabelStyle(skin.getFont("default-font"), Color.WHITE);
         skin.add("default", labelStyle);
@@ -74,7 +67,7 @@ public class LoginScreen implements GameScreen {
         bgPixmap.fill();
         tfStyle.background = new TextureRegionDrawable(new Texture(bgPixmap));
 
-        Pixmap cursorPixmap = new Pixmap(2, (int)customFont.getLineHeight(), Pixmap.Format.RGBA8888);
+        Pixmap cursorPixmap = new Pixmap(2, (int)defaultFont.getLineHeight(), Pixmap.Format.RGBA8888);
         cursorPixmap.setColor(Color.WHITE);
         cursorPixmap.fill();
         tfStyle.cursor = new TextureRegionDrawable(new Texture(cursorPixmap));

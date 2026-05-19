@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -38,15 +37,9 @@ public class MenuScreen implements GameScreen {
         background = new Texture(Gdx.files.internal("menu_bg.png"));
         skin = new Skin();
 
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("Silver.ttf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 32;
-        parameter.color = Color.WHITE;
+        BitmapFont defaultFont = new BitmapFont();
 
-        BitmapFont customFont = generator.generateFont(parameter);
-        generator.dispose();
-
-        skin.add("default-font", customFont);
+        skin.add("default-font", defaultFont);
 
         Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
         pixmap.setColor(0.15f, 0.25f, 0.50f, 1f);
@@ -84,25 +77,19 @@ public class MenuScreen implements GameScreen {
         topTable.add(userGreetingLabel).padTop(10).row();
 
 
-        Table leftTable = new Table();
-        leftTable.setFillParent(true);
-        leftTable.left();
-        stage.addActor(leftTable);
+        Table bottomTable = new Table();
+        bottomTable.setFillParent(true);
+        bottomTable.bottom();
+        stage.addActor(bottomTable);
 
-        TextButton playBtn = new TextButton("Play New Game", skin);
-        TextButton loadBtn = new TextButton("Load Game", skin);
-        TextButton settingBtn = new TextButton("Setting", skin);
-        TextButton exitBtn = new TextButton("Exit", skin);
+        TextButton playBtn = new TextButton("Play Game", skin);
 
         float btnWidth = 220f;
         float btnHeight = 50f;
         float padding = 10f;
-        float leftPadding = 50f;
+        float bottomPadding = 30f;
 
-        leftTable.add(playBtn).size(btnWidth, btnHeight).pad(padding).padLeft(leftPadding).row();
-        leftTable.add(loadBtn).size(btnWidth, btnHeight).pad(padding).padLeft(leftPadding).row();
-        leftTable.add(settingBtn).size(btnWidth, btnHeight).pad(padding).padLeft(leftPadding).row();
-        leftTable.add(exitBtn).size(btnWidth, btnHeight).pad(padding).padLeft(leftPadding).row();
+        bottomTable.add(playBtn).size(btnWidth, btnHeight).pad(padding).padBottom(bottomPadding).row();
 
         Table rightTable = new Table();
         rightTable.setFillParent(true);
@@ -129,26 +116,6 @@ public class MenuScreen implements GameScreen {
             }
         });
 
-        loadBtn.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                gsm.push(new SaveScreen(gsm));
-            }
-        });
-
-        settingBtn.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                gsm.set(new SettingScreen(gsm));
-            }
-        });
-
-        exitBtn.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.exit();
-            }
-        });
 
         loginBtn.addListener(new ClickListener() {
             @Override

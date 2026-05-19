@@ -6,12 +6,11 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.raihan.frontend.entities.item.Rifle;
 import com.raihan.frontend.entities.item.Weapon;
 
-public class PlayerUIObserver implements PlayerObserver{
+public class PlayerUIObserver implements PlayerObserver {
     private float hp = 100f, energy = 100f, satiation = 100f, hydration = 100f;
     private Weapon weapon;
     private int ammoCount = 0;
@@ -28,12 +27,7 @@ public class PlayerUIObserver implements PlayerObserver{
         shapeRenderer = new ShapeRenderer();
         batch = new SpriteBatch();
 
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("Silver.ttf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 32;
-        parameter.color = Color.WHITE;
-
-        font = generator.generateFont(parameter);
+        font = new BitmapFont();
         font.getData().setScale(1.2f);
     }
 
@@ -79,7 +73,11 @@ public class PlayerUIObserver implements PlayerObserver{
         font.draw(batch, "FOOD", startX + barWidth + 10, startY - 2 * spacing + 12);
         font.draw(batch, "WATER", startX + barWidth + 10, startY - 3 * spacing + 12);
 
-        String timeText = String.format("Time: %02d:%02d", hour, minute);
+        // --- Perbaikan GWT untuk Waktu ---
+        String hourStr = hour < 10 ? "0" + hour : String.valueOf(hour);
+        String minuteStr = minute < 10 ? "0" + minute : String.valueOf(minute);
+        String timeText = "Time: " + hourStr + ":" + minuteStr;
+
         GlyphLayout layout = new GlyphLayout(font, timeText);
         float timeX = (Gdx.graphics.getWidth() - layout.width) / 2f;
         float timeY = Gdx.graphics.getHeight() - 15f;
@@ -111,9 +109,14 @@ public class PlayerUIObserver implements PlayerObserver{
         float xPosition = Gdx.graphics.getWidth() / 2f - 80f;
         float yPosition = Gdx.graphics.getHeight() - 40f;
 
-        String waveText = String.format("Next Wave: %02d:%02d", displayMinutes, displaySeconds);
-        font.setColor(com.badlogic.gdx.graphics.Color.ORANGE);
+        String waveMinStr = displayMinutes < 10 ? "0" + displayMinutes : String.valueOf(displayMinutes);
+        String waveSecStr = displaySeconds < 10 ? "0" + displaySeconds : String.valueOf(displaySeconds);
+        String waveText = "Next Wave: " + waveMinStr + ":" + waveSecStr;
+
+        font.setColor(Color.ORANGE);
         font.draw(batch, waveText, xPosition, yPosition);
+
+        font.setColor(Color.WHITE);
 
         batch.end();
     }

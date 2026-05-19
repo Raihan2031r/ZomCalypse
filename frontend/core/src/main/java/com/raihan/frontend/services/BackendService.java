@@ -1,14 +1,14 @@
 package com.raihan.frontend.services;
-import okhttp3.*;
 
-import java.io.IOException;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Net;
 
 public class BackendService {
     private static final boolean IS_DEV = false;
     private static final String DEV_URL = "http://localhost:8081";
     private static final String PROD_URL = "https://zomcalypse-backend.up.railway.app";
     private final String BASE_URL;
-    private static final OkHttpClient client = new OkHttpClient();
+
     public BackendService() {
         BASE_URL = IS_DEV ? DEV_URL : PROD_URL;
     }
@@ -21,131 +21,115 @@ public class BackendService {
     public void createPlayer(String username, String password, RequestCallback callback) {
         String json = "{\"username\":\"" + username + "\",\"password\":\"" + password + "\"}";
 
-        RequestBody body = RequestBody.create(
-            json, MediaType.parse("application/json")
-        );
-
-        Request request = new Request.Builder()
-            .url(BASE_URL + "/auth/signup")
-            .post(body)
-            .build();
+        Net.HttpRequest request = new Net.HttpRequest(Net.HttpMethods.POST);
+        request.setUrl(BASE_URL + "/auth/signup");
+        request.setHeader("Content-Type", "application/json");
+        request.setContent(json);
 
         send(request, callback);
     }
 
     public void loginPlayer(String username, String password, RequestCallback callback) {
         String json = "{\"username\":\"" + username + "\",\"password\":\"" + password + "\"}";
-        RequestBody body = RequestBody.create(
-            json, MediaType.parse("application/json")
-        );
-        Request request = new Request.Builder()
-            .url(BASE_URL + "/auth/login")
-            .post(body)
-            .build();
+
+        Net.HttpRequest request = new Net.HttpRequest(Net.HttpMethods.POST);
+        request.setUrl(BASE_URL + "/auth/login");
+        request.setHeader("Content-Type", "application/json");
+        request.setContent(json);
 
         send(request, callback);
     }
 
     public void getPlayer(String token, RequestCallback callback) {
-        Request request = new Request.Builder()
-            .url(BASE_URL + "/api/players/me")
-            .get()
-            .addHeader("Authorization", "Bearer " + token)
-            .build();
+        Net.HttpRequest request = new Net.HttpRequest(Net.HttpMethods.GET);
+        request.setUrl(BASE_URL + "/api/players/me");
+        request.setHeader("Authorization", "Bearer " + token);
 
         send(request, callback);
     }
 
     public void getLeaderboard(int limit, RequestCallback callback) {
-        Request request = new Request.Builder()
-            .url(BASE_URL + "/api/players/leaderboard/high-score?limit=" + limit)
-            .get()
-            .build();
+        Net.HttpRequest request = new Net.HttpRequest(Net.HttpMethods.GET);
+        request.setUrl(BASE_URL + "/api/players/leaderboard/high-score?limit=" + limit);
 
         send(request, callback);
     }
 
     public void submitScore(String token, int score, int zombiesKilled, int daysPassed, RequestCallback callback) {
-        String json = String.format(
-            "{" +
-                "\"value\":%d," +
-                "\"zombies_killed\":%d," +
-                "\"days_Passed\":%d" +
-                "}",
-            score, zombiesKilled, daysPassed
-        );
+        String json = "{" +
+            "\"value\":" + score + "," +
+            "\"zombies_killed\":" + zombiesKilled + "," +
+            "\"days_Passed\":" + daysPassed +
+            "}";
 
-        RequestBody body = RequestBody.create(
-            json, MediaType.parse("application/json")
-        );
-
-        Request request = new Request.Builder()
-            .url(BASE_URL + "/api/scores")
-            .post(body)
-            .addHeader("Authorization", "Bearer " + token)
-            .build();
+        Net.HttpRequest request = new Net.HttpRequest(Net.HttpMethods.POST);
+        request.setUrl(BASE_URL + "/api/scores");
+        request.setHeader("Content-Type", "application/json");
+        request.setHeader("Authorization", "Bearer " + token);
+        request.setContent(json);
 
         send(request, callback);
     }
 
     public void getPlayerSaves(String token, RequestCallback callback) {
-        Request request = new Request.Builder()
-            .url(BASE_URL + "/api/games")
-            .get()
-            .addHeader("Authorization", "Bearer " + token)
-            .build();
+        Net.HttpRequest request = new Net.HttpRequest(Net.HttpMethods.GET);
+        request.setUrl(BASE_URL + "/api/games");
+        request.setHeader("Authorization", "Bearer " + token);
 
         send(request, callback);
     }
 
     public void saveGameData(String token, String jsonSaveData, RequestCallback callback) {
-        RequestBody body = RequestBody.create(
-            jsonSaveData, MediaType.parse("application/json")
-        );
-
-        Request request = new Request.Builder()
-            .url(BASE_URL + "/api/games/save")
-            .post(body)
-            .addHeader("Authorization", "Bearer " + token)
-            .build();
+        Net.HttpRequest request = new Net.HttpRequest(Net.HttpMethods.POST);
+        request.setUrl(BASE_URL + "/api/games/save");
+        request.setHeader("Content-Type", "application/json");
+        request.setHeader("Authorization", "Bearer " + token);
+        request.setContent(jsonSaveData);
 
         send(request, callback);
     }
 
     public void pingBackend() {
-        Request request = new Request.Builder()
-            .url(BASE_URL + "/api/info")
-            .get()
-            .build();
+        Net.HttpRequest request = new Net.HttpRequest(Net.HttpMethods.GET);
+        request.setUrl(BASE_URL + "/api/info");
 
-        client.newCall(request).enqueue(new Callback() {
+        Gdx.net.sendHttpRequest(request, new Net.HttpResponseListener() {
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void handleHttpResponse(Net.HttpResponse httpResponse) {
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                response.close();
+            public void failed(Throwable t) {
+            }
+
+            @Override
+            public void cancelled() {
             }
         });
     }
 
-    private void send(Request request, RequestCallback callback) {
-        client.newCall(request).enqueue(new Callback() {
+    private void send(Net.HttpRequest request, final RequestCallback callback) {
+        Gdx.net.sendHttpRequest(request, new Net.HttpResponseListener() {
             @Override
-            public void onFailure(Call call, IOException e) {
-                callback.onError(e.getMessage());
+            public void handleHttpResponse(Net.HttpResponse httpResponse) {
+                int statusCode = httpResponse.getStatus().getStatusCode();
+                String responseString = httpResponse.getResultAsString();
+
+                if (statusCode >= 200 && statusCode < 300) {
+                    Gdx.app.postRunnable(() -> callback.onSuccess(responseString));
+                } else {
+                    Gdx.app.postRunnable(() -> callback.onError("HTTP " + statusCode + " - " + responseString));
+                }
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                try (ResponseBody responseBody = response.body()) {
-                    if (response.isSuccessful() && responseBody != null) {
-                        callback.onSuccess(responseBody.string());
-                    } else {
-                        callback.onError("HTTP " + response.code());
-                    }
-                }
+            public void failed(Throwable t) {
+                Gdx.app.postRunnable(() -> callback.onError(t.getMessage()));
+            }
+
+            @Override
+            public void cancelled() {
+                Gdx.app.postRunnable(() -> callback.onError("Request cancelled"));
             }
         });
     }

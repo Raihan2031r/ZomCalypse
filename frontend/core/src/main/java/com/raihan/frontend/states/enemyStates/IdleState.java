@@ -15,7 +15,7 @@ public class IdleState implements EnemyState {
     public void enter(Enemies enemy) {
         enemy.getVelocity().setZero();
         idleTimer = 0f;
-        idleDuration = random.nextFloat(1.5f, 3.5f);
+        idleDuration = 1.5f + random.nextFloat() * (3.5f - 1.5f);
     }
 
     @Override

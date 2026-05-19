@@ -21,12 +21,7 @@ import com.raihan.frontend.factories.ZombieFactory;
 import com.raihan.frontend.observers.PlayerUIObserver;
 import com.raihan.frontend.observers.ScoreUIObserver;
 import com.raihan.frontend.pools.Bullets;
-import com.raihan.frontend.save.SaveDTO;
-import com.raihan.frontend.states.enemyStates.IdleState;
 import com.raihan.frontend.strategies.DifficultyStrategy;
-import com.raihan.frontend.strategies.EasyMode;
-import com.raihan.frontend.strategies.HardMode;
-import com.raihan.frontend.strategies.MediumMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,71 +79,6 @@ public class PlayingScreen implements GameScreen{
         commands.add(new DownCommand(players.get(0)));
         commands.add(new RunCommand(players.get(0)));
         attackCommand = new AttackCommand(players.get(0));
-    }
-
-    public PlayingScreen(GameStateManager gsm, SaveDTO saveData) {
-        this(gsm, new MediumMode());
-        DifficultyStrategy gameDifficulty;
-        switch (saveData.gameDifficulty){
-            case "Easy":
-                gameDifficulty = new EasyMode();
-                break;
-            case "Hard":
-                gameDifficulty = new HardMode();
-                break;
-            default:
-                gameDifficulty = new MediumMode();
-                break;
-        }
-        difficultyStrategy = gameDifficulty;
-        gm.getScoreManager().loadGame(saveData.zombiesKilled, saveData.gameDay, saveData.spentScore);
-        Player mainPlayer = players.get(0);
-
-        mainPlayer.getPosition().set(saveData.playerPosition.x, saveData.playerPosition.y);
-        mainPlayer.getItems().clear();
-        this.Hour = saveData.gameHour;
-        this.Minute = saveData.gameMinute;
-
-        mainPlayer.setStatsFromSave(
-            saveData.playerHP,
-            saveData.playerEnergy,
-            saveData.playerSatiation,
-            saveData.playerHydration
-        );
-
-        for (SaveDTO.ItemData itemData : saveData.inventoryItems) {
-            switch (itemData.name) {
-                case "Food":
-                    mainPlayer.pickUp(new Food(itemData.durability, itemData.impact));
-                    break;
-                case "Drink":
-                    mainPlayer.pickUp(new Drink(itemData.durability, itemData.impact));
-                    break;
-                case "Ammo":
-                    mainPlayer.pickUp(new Ammo());
-                    break;
-                case "Bandage":
-                    mainPlayer.pickUp(new Bandage());
-                    break;
-                case "Spear":
-                    mainPlayer.pickUp(new Spear());
-                    break;
-                case "Rifle":
-                    mainPlayer.pickUp(new Rifle());
-                    break;
-            }
-        }
-
-        zombieFactory.releaseAll();
-
-        for (SaveDTO.ZombieData zData : saveData.activeZombies) {
-            Zombies z = new Zombies(zData.pos.x, zData.pos.y, zData.hp, 10f, 100f, 200f, 32f);
-
-            zombieFactory.getInUse().add(z);
-            for (Zombies zombies: zombieFactory.getInUse()){
-                zombies.getEsm().set(new IdleState());
-            }
-        }
     }
 
     @Override
@@ -361,52 +291,6 @@ public class PlayingScreen implements GameScreen{
 
         playerUI.render(Hour, Minute, timeRemaining);
         scoreUI.render();
-    }
-
-    public SaveDTO getSaveData() {
-        SaveDTO data = new SaveDTO();
-        data.gameDifficulty = difficultyStrategy.getMode();
-        Player p = players.get(0);
-
-        data.playerHP = p.getHP();
-        data.playerEnergy = p.getEnergy();
-        data.playerSatiation = p.getSatiation();
-        data.playerHydration = p.getHydration();
-        data.playerPosition = new SaveDTO.Vec2Data();
-        data.playerPosition.x = p.getPosition().x;
-        data.playerPosition.y = p.getPosition().y;
-
-        data.currentWeapon = (p.getWeapon() != null) ? p.getWeapon().getName() : "None";
-
-        for (Items item : p.getItems()) {
-            SaveDTO.ItemData itemData = new SaveDTO.ItemData();
-            itemData.name = item.getName();
-
-            if (!(item instanceof Weapon)) {
-                itemData.durability = item.getDurability();
-                itemData.impact = item.getImpact();
-            }
-
-            data.inventoryItems.add(itemData);
-        }
-
-        for (Zombies z : zombieFactory.getInUse()) {
-            SaveDTO.ZombieData zData = new SaveDTO.ZombieData();
-            zData.pos = new SaveDTO.Vec2Data();
-            zData.pos.x = z.getPosition().x;
-            zData.pos.y = z.getPosition().y;
-            zData.hp = z.getHP();
-            data.activeZombies.add(zData);
-        }
-
-        data.gameHour = this.Hour;
-        data.gameMinute = this.Minute;
-        data.gameDay = gm.getScoreManager().getDaysSurvived();
-
-        data.zombiesKilled = gm.getScoreManager().getZombieKills();
-        data.spentScore = gm.getScoreManager().getSpentScore();
-
-        return data;
     }
 
     @Override

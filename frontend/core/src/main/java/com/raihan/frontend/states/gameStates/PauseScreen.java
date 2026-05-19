@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -15,10 +14,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.raihan.frontend.GameManager;
-import com.raihan.frontend.save.SaveDTO;
-import com.raihan.frontend.save.SaveManager;
-import com.raihan.frontend.services.BackendService;
 
 public class PauseScreen implements GameScreen {
     private final GameStateManager gsm;
@@ -34,15 +29,10 @@ public class PauseScreen implements GameScreen {
         this.stage = new Stage(new ScreenViewport());
 
         skin = new Skin();
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("Silver.ttf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 32;
-        parameter.color = Color.WHITE;
 
-        BitmapFont customFont = generator.generateFont(parameter);
-        generator.dispose();
+        BitmapFont defaultFont = new BitmapFont();
 
-        skin.add("default-font", customFont);
+        skin.add("default-font", defaultFont);
 
         Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
         pixmap.setColor(0.3f, 0.3f, 0.3f, 1f);
@@ -79,18 +69,14 @@ public class PauseScreen implements GameScreen {
         table.add(title).padBottom(40).row();
 
         TextButton resumeBtn = new TextButton("Resume", skin);
-        TextButton saveBtn = new TextButton("Save Game", skin);
         TextButton menuBtn = new TextButton("Main Menu", skin);
-        TextButton exitBtn = new TextButton("Exit Desktop", skin);
 
         float btnWidth = 200f;
         float btnHeight = 50f;
         float padding = 10f;
 
         table.add(resumeBtn).size(btnWidth, btnHeight).pad(padding).row();
-        table.add(saveBtn).size(btnWidth, btnHeight).pad(padding).row();
         table.add(menuBtn).size(btnWidth, btnHeight).pad(padding).row();
-        table.add(exitBtn).size(btnWidth, btnHeight).pad(padding).row();
 
         resumeBtn.addListener(new ClickListener() {
             @Override
@@ -99,49 +85,11 @@ public class PauseScreen implements GameScreen {
             }
         });
 
-        saveBtn.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                if (previousScreen instanceof PlayingScreen) {
-                    saveBtn.setText("Saving...");
-
-                    PlayingScreen game = (PlayingScreen) previousScreen;
-                    SaveDTO data = game.getSaveData();
-
-                    SaveManager.save(data);
-
-                    GameManager.getInstance().saveGameToCloud(data, new BackendService.RequestCallback() {
-                        @Override
-                        public void onSuccess(String response) {
-                            Gdx.app.postRunnable(() -> saveBtn.setText("Save Success!"));
-                        }
-
-                        @Override
-                        public void onError(String error) {
-                            Gdx.app.postRunnable(() -> {
-                                if (error.equals("Not logged in")) {
-                                    saveBtn.setText("Saved Locally (Not Logged In)");
-                                } else {
-                                    saveBtn.setText("Cloud Error. Saved Locally.");
-                                }
-                            });
-                        }
-                    });
-                }
-            }
-        });
 
         menuBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 gsm.set(new MenuScreen(gsm));
-            }
-        });
-
-        exitBtn.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.exit();
             }
         });
 
