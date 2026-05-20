@@ -15,6 +15,7 @@ public class Boxes extends Crates {
         if (isLooted) return;
 
         player.pickUp(itemFactory.getRandomLoot());
+        cooldownTimer = cooldownDuration;
         isLooted = true;
     }
 }

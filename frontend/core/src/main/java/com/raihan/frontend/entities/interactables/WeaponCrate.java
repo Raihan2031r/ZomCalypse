@@ -15,6 +15,7 @@ public class WeaponCrate extends Crates{
     public void interact(Player player, ScoreManager scoreManager) {
         if (!isLooted){
             player.pickUp(new Rifle());
+            cooldownTimer = cooldownDuration;
             isLooted = true;
         }
     }

@@ -15,6 +15,7 @@ public class Trash extends Crates {
         if (isLooted) return;
 
         player.pickUp(itemFactory.getTrashLoot());
+        cooldownTimer = cooldownDuration;
         isLooted = true;
     }
 }
