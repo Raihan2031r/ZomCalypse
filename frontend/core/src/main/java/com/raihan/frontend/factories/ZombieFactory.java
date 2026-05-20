@@ -23,20 +23,24 @@ public class ZombieFactory {
 
     public void spawnWave(DifficultyStrategy strategy, List<Rectangle> spawnAreas) {
         int zombieCount = (int) strategy.getZombiesPerWave();
+
         float hpMultiplier = strategy.getMode().equalsIgnoreCase("Hard") ? 1.5f : 1.0f;
         float speedMultiplier = strategy.getMode().equalsIgnoreCase("Hard") ? 1.3f : 1.0f;
 
         float ZOMBIE_WIDTH = 32f;
         float ZOMBIE_HEIGHT = 32f;
 
+        float PADDING_X = 7f;
+        float PADDING_Y = 10f;
+
         for (int i = 0; i < zombieCount; i++) {
             Rectangle chosenArea = spawnAreas.get(random.nextInt(spawnAreas.size()));
 
-            float maxSpawnWidth = Math.max(0, chosenArea.width - ZOMBIE_WIDTH);
-            float maxSpawnHeight = Math.max(0, chosenArea.height - ZOMBIE_HEIGHT);
+            float maxSpawnWidth = Math.max(0, chosenArea.width - ZOMBIE_WIDTH - PADDING_X);
+            float maxSpawnHeight = Math.max(0, chosenArea.height - ZOMBIE_HEIGHT - PADDING_Y);
 
-            float randomX = chosenArea.x + (random.nextFloat() * maxSpawnWidth);
-            float randomY = chosenArea.y + (random.nextFloat() * maxSpawnHeight);
+            float randomX = chosenArea.x + PADDING_X + (random.nextFloat() * maxSpawnWidth);
+            float randomY = chosenArea.y + PADDING_Y + (random.nextFloat() * maxSpawnHeight);
 
             Zombies zombie = zombiePool.obtain();
 

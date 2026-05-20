@@ -203,6 +203,10 @@ public class PlayingScreen implements GameScreen{
             i.update(delta);
         }
 
+        for (Crates c : mapManager.getInteractables()) {
+            c.update(delta);
+        }
+
         Player main = players.get(0);
         camera.position.set(main.getPosition().x, main.getPosition().y, 0);
         camera.update();

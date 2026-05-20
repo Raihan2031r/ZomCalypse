@@ -17,8 +17,8 @@ public class VendingMachine extends Crates {
         if (scoreManager.getTotalScore() >= COST) {
             scoreManager.spendScore(COST);
             player.pickUp(itemFactory.getVendingMachineLoot());
-        } else {
-            System.out.println("Skor tidak cukup! Butuh " + COST);
+            this.cooldownTimer = cooldownDuration;
+            isLooted = true;
         }
     }
 }
