@@ -3,7 +3,7 @@ package com.raihan.frontend.strategies;
 public class HardMode implements DifficultyStrategy{
     @Override
     public float getZombiesPerWave() {
-        return 40;
+        return 20;
     }
 
     @Override

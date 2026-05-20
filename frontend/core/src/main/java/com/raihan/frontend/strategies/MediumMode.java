@@ -3,7 +3,7 @@ package com.raihan.frontend.strategies;
 public class MediumMode implements DifficultyStrategy{
     @Override
     public float getZombiesPerWave() {
-        return 30;
+        return 10;
     }
 
     @Override
@@ -13,6 +13,6 @@ public class MediumMode implements DifficultyStrategy{
 
     @Override
     public float getTimePerWave() {
-        return 65f;
+        return 75f;
     }
 }
