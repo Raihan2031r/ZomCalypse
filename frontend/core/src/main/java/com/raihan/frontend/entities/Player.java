@@ -421,8 +421,10 @@ public class Player implements PlayerSubject {
     }
 
     private void damageOverTime(float damage, float delta){
-        if(HP > 0) this.HP -= damage * delta;
-        recoveryDelay = 5f;
+        if (damage > 0f) {
+            if(HP > 0) this.HP -= damage * delta;
+            recoveryDelay = 5f;
+        }
     }
 
     public void eat(float impact){
