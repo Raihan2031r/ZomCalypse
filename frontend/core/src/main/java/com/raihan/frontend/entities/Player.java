@@ -317,12 +317,6 @@ public class Player implements PlayerSubject {
 
             if(HP > 100f) HP = 100f;
         }
-
-        if(
-            (satiation > HUNGRY_THRESHOLD && psm.checkState() instanceof HungryState)
-                ||
-            (hydration > THIRST_THRESHOLD && psm.checkState() instanceof ThirstState)
-        ) psm.pop();
     }
 
     private void checkAutoStates() {
@@ -353,6 +347,13 @@ public class Player implements PlayerSubject {
                 psm.checkState() instanceof NormalState
             )
         ) psm.set(new NormalState());
+
+
+        if(
+            (satiation > HUNGRY_THRESHOLD && psm.checkState() instanceof HungryState)
+                ||
+            (hydration > THIRST_THRESHOLD && psm.checkState() instanceof ThirstState)
+        ) psm.pop();
     }
 
     public void run(){
@@ -421,8 +422,10 @@ public class Player implements PlayerSubject {
     }
 
     private void damageOverTime(float damage, float delta){
-        if(HP > 0) this.HP -= damage * delta;
-        recoveryDelay = 5f;
+        if (damage > 0f) {
+            if(HP > 0) this.HP -= damage * delta;
+            recoveryDelay = 5f;
+        }
     }
 
     public void eat(float impact){
